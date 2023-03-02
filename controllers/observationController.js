@@ -1,6 +1,7 @@
 import Observation from "../models/Observation.js";
 import PDFDocument from 'pdfkit'
 import fs from 'fs'
+import generateToken from "../utils/generateToken.js";
 
 
 const getObservations = async (req, res) => {
@@ -34,7 +35,25 @@ const getObservation = async (req, res) => {
         const error = new Error('No se pudo obtener información de la observacion')
         return res.status(403).json({msg: error.message})
     }
-   
+    
+    if(req.user.isPatient){
+        if(observation.patient._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
+    if(req.user.isDoctor){
+        if(observation.doctor._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
+    if(req.user.isHospital){
+        if(observation.hospital._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
     return res.status(200).json(observation)     
 }
 
@@ -49,22 +68,22 @@ const downloadObservation = async (req, res) => {
         return res.status(403).json({msg: error.message})
     }
 
-    
 
     try {
         const doc = new PDFDocument();
-        const filename = `document_${Date.now()}.pdf`;
+        const filename = `document_${generateToken()}.pdf`;
         doc.pipe(fs.createWriteStream(filename));
 
         doc.fontSize(16).text(observation.observation);
         doc.fontSize(12).text(observation.observation);
         doc.text()
+        doc.pipe(res);
 
         doc.end();
 
         res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
         res.setHeader('Content-Type', 'application/pdf');
-        res.sendFile(filename, { root: '.' });
+        res.download(filename, {root: '.'});
     } catch (error) {
         console.log(error);
         const e = new Error('Error generando el pdf')

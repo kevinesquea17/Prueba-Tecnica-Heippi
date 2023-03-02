@@ -25,7 +25,7 @@ router.post('/register-doctor', checkAuth,  [
     check('password', 'El password es obligatorio').not().isEmpty(),
     check('name', 'El nombre es obligatorio').not().isEmpty(),
     check('specialty', 'La especialidad del medico es obligatoria').not().isEmpty(),
-    check('hospital', 'No es un hospital valido').isMongoId(),
+    check('hospital', 'No es un hospital valido').not().isMongoId(),
     validateFields
 ], registerDoctor)
 

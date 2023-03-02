@@ -18,6 +18,7 @@ const createObservation = async (req, res) => {
 
     try {
         const observation = new Observation(req.body);
+        observation.specialty = req.user.specialty;
         observation.patient = patient._id;
         observation.doctor = req.user._id;
         observation.hospital = req.user.hospital;
