@@ -22,7 +22,7 @@ const emailRegister = (data) => {
         text: "Comprueba tu cuenta en Hospital APP.",
         html: `<p>Hola ${name}, comprueba tu cuenta en nuestra aplicación</p>
                 <p>Tu cuenta ya está lista, solo debes comprobarla en el siguiente enlace:
-                <a href="http://localhost:3000/api/user/confirm/${token}" >Comprobar cuenta</a></p>
+                <a href="https://prueba-tecnica-heippi-production.up.railway.app/api/user/confirm/${token}" >Comprobar cuenta</a></p>
                 <p>Si tu no creaste está cuenta, haz caso omiso</p>        
         `
 
