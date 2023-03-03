@@ -8,6 +8,7 @@ const registerPatient = async (req, res) => {
     const {identification} = req.body;
 
     const existUser = await User.findOne({identification});
+    
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
