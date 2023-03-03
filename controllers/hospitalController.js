@@ -4,14 +4,9 @@ import User from "../models/User.js";
 
 const registerHospital = async (req, res) => {
 
-    const {email, identification} = req.body;
+    const {identification} = req.body;
 
-    const existUser = await User.findOne({
-        $or: [
-            {email},
-            {identification}
-        ]
-    });
+    const existUser = await User.findOne({identification});
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
@@ -34,14 +29,9 @@ const registerDoctor = async (req, res) => {
         return res.status(500).json({msg: error.message})
     }
 
-    const {email, identification} = req.body;
+    const {identification} = req.body;
 
-    const existUser = await User.findOne({
-        $or: [
-            {email},
-            {identification}
-        ]
-    });
+    const existUser = await User.findOne({identification});
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
