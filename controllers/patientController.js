@@ -7,7 +7,7 @@ const registerPatient = async (req, res) => {
 
     const {identification, email} = req.body;
 
-    const existUser = await User.findOne({email});
+    const existUser = await User.findOne({identification});
 
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
@@ -16,7 +16,7 @@ const registerPatient = async (req, res) => {
 
     try {
         const patient = new Patient(req.body);
-        await patient.save();
+        const patientSaved = await patient.save();
 
         //Enviar mail
         emailRegister({
@@ -27,6 +27,7 @@ const registerPatient = async (req, res) => {
 
         return res.status(200).json({msg: 'Hemos enviado a tu email las instrucciones para confirmar tu cuenta.'})
     } catch (error) {
+        console.log(error)
         const e = new Error('No se pudo registrar el paciente.');
         return res.status(500).json({msg: e.message})
     }
