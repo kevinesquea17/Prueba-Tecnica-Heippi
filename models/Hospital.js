@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import User from './User.js';
+import { ServiceSchema } from './Service.js';
 
 const HospitalSchema = mongoose.Schema({
     isHospital: {
@@ -14,6 +15,7 @@ const HospitalSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    services: [ServiceSchema]
 });
 
 const Hospital = User.discriminator('Hospital', HospitalSchema);

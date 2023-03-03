@@ -1,7 +1,7 @@
 import Observation from "../models/Observation.js";
 import PDFDocument from 'pdfkit'
 import fs from 'fs'
-import generateToken from "../utils/generateToken.js";
+
 
 
 const getObservations = async (req, res) => {
@@ -68,15 +68,46 @@ const downloadObservation = async (req, res) => {
         return res.status(403).json({msg: error.message})
     }
 
+    if(req.user.isPatient){
+        if(observation.patient._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
+    if(req.user.isDoctor){
+        if(observation.doctor._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
+    if(req.user.isHospital){
+        if(observation.hospital._id.toString() !== _id.toString()){
+            return res.status(403).json({msg: 'Acción no valida'})
+        }
+    }
+
 
     try {
         const doc = new PDFDocument();
-        const filename = `document_${generateToken()}.pdf`;
+        const filename = `document_${Date.now()}.pdf`;
         doc.pipe(fs.createWriteStream(filename));
 
-        doc.fontSize(16).text(observation.observation);
-        doc.fontSize(12).text(observation.observation);
-        doc.text()
+        doc.fontSize(16).text(observation.hospital.name, { align: 'center'});
+        doc.fontSize(14).text('Información del paciente', {align: 'center', height: 120});
+        doc.fontSize(12).text(`Nombre: ${observation.patient.name}`)
+        doc.fontSize(12).text(`Identificacion: ${observation.patient.identification}`)
+        doc.fontSize(12).text(`Email: ${observation.patient.email}`)
+        doc.fontSize(12).text(`Telefono: ${observation.patient.phone}`)
+        doc.fontSize(14).text('Información de la cita', {align: 'center', height: 120});
+        doc.fontSize(12).text(`Observación: ${observation.observation}`)
+        doc.fontSize(12).text(`Estado de salud: ${observation.healthCondition}`)
+        doc.fontSize(12).text(`Especialidad: ${observation.specialty}`)
+        doc.fontSize(14).text('Información de la Doctor', {align: 'center', height: 120});
+        doc.fontSize(12).text(`Nombre: ${observation.doctor.name}`)
+        doc.fontSize(12).text(`Telefono: ${observation.doctor.phone}`)
+
+
+        //doc.text()
         doc.pipe(res);
 
         doc.end();
