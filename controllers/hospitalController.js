@@ -4,9 +4,14 @@ import User from "../models/User.js";
 
 const registerHospital = async (req, res) => {
 
-    const {email} = req.body;
+    const {email, identification} = req.body;
 
-    const existUser = await User.findOne({email});
+    const existUser = await User.findOne({
+        $or: [
+            {email},
+            {identification}
+        ]
+    });
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
@@ -14,8 +19,8 @@ const registerHospital = async (req, res) => {
 
     try {
         const hospital = new Hospital(req.body);
-        const hospitalSaved = await hospital.save();
-        return res.status(200).json(hospitalSaved)
+        await hospital.save();
+        return res.status(200).json({msg: 'Hemos enviado a tu email las instrucciones para confirmar tu cuenta.'})
     } catch (error) {
         console.log(error)
         const e = new Error('No se pudo registrar el hospital.');
@@ -29,9 +34,14 @@ const registerDoctor = async (req, res) => {
         return res.status(500).json({msg: error.message})
     }
 
-    const {email} = req.body;
+    const {email, identification} = req.body;
 
-    const existUser = await User.findOne({email});
+    const existUser = await User.findOne({
+        $or: [
+            {email},
+            {identification}
+        ]
+    });
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
@@ -41,8 +51,8 @@ const registerDoctor = async (req, res) => {
     doctor.hospital = req.user._id;
 
     try {
-        const doctorSaved = await doctor.save();
-        return res.status(200).json(doctorSaved)
+        await doctor.save();
+        return res.status(200).json({msg: "Hemos enviado las instrucciones a tu email para confirmar tu cuenta."})
     } catch (error) {
         console.log(error)
         const e = new Error('No se pudo registrar el Doctor.')

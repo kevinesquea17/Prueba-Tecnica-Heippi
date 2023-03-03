@@ -5,9 +5,14 @@ import emailRegister from "../utils/sendMailRegister.js";
 
 const registerPatient = async (req, res) => {
 
-    const {email} = req.body;
+    const {email, identification} = req.body;
 
-    const existUser = await User.findOne({email});
+    const existUser = await User.findOne({
+        $or: [
+            {email},
+            {identification}
+        ]
+    });
     if(existUser){
         const error = new Error('Este usuario ya se encuentra registrado!');
         return res.status(403).json({msg: error.message})
@@ -15,7 +20,7 @@ const registerPatient = async (req, res) => {
 
     try {
         const patient = new Patient(req.body);
-        const patientSaved = await patient.save();
+        await patient.save();
 
         //Enviar mail
         emailRegister({
@@ -24,7 +29,7 @@ const registerPatient = async (req, res) => {
             token: patientSaved.token
         })
 
-        return res.status(200).json(patientSaved)
+        return res.status(200).json({msg: 'Hemos enviado a tu email las instrucciones para confirmar tu cuenta.'})
     } catch (error) {
         const e = new Error('No se pudo registrar el paciente.');
         return res.status(500).json({msg: e.message})
