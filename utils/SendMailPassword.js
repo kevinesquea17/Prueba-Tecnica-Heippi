@@ -23,7 +23,7 @@ const sendMailPassword = (data) => {
         text: "Recupera tu contraseña en nuestra aplicación.",
         html: `<p>Hola ${name}, solicitaste recuperar tu contraseña.</p>
                 <p>Solo debes dar click en el siguiente enlace:
-                <a href="https://prueba-tecnica-heippi-production.up.railway.app/api/user/confirm/${token}" >Recuperar contraseña</a></p>
+                <a href="https://prueba-tecnica-heippi-production.up.railway.app/api/user/reset-password/${token}" >Recuperar contraseña</a></p>
                 <p>Si tu no lo solicitaste esta recuperación, haz caso omiso</p>        
         `
 
